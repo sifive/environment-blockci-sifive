@@ -1,0 +1,81 @@
+#################################################################################
+## Logic for handling custom environment
+##
+## Do not edit below this line
+#################################################################################
+
+def extractEnvFromJSON = match _
+  JObject envPairs =
+    def extractEnvValue (Pair var jValue) = match jValue
+      JString value = Pair var value | Pass
+      _ = Fail "Environment variable {var} is not a string, found: {format jValue}".makeError
+    map extractEnvValue envPairs
+    | findFail
+  other = Fail "Environment JSON is not a JObject, found: {format other}".makeError
+
+def absPath path =
+  if matches `/.*` path then path else simplify "{workspace}/{path}"
+
+def prependOrElseSetEnv env (Pair key value) =
+  def editFn =
+    _
+    | omap ("{value.absPath}:{_}")
+    | getOrElse value.absPath
+    | Some
+  editEnvironment key editFn env
+
+global def makePresetEnvironmentRunner name scoreMultiplier env baseRunner =
+  def score plan =
+    plan
+    | setPlanResources Nil
+    | baseRunner.getRunnerScore
+    | rmap (_ *. scoreMultiplier)
+
+  def pre input =
+    def newEnv =
+      input
+      | rmap getRunnerInputEnvironment
+      | rmap (foldl prependOrElseSetEnv _ env)
+    def newInput =
+      match input newEnv
+        (Pass i) (Pass e) = Pass (setRunnerInputEnvironment e i)
+        (Fail e) _ = Fail e
+        _ (Fail e) = Fail e
+    Pair newInput Unit
+
+  def post (Pair output Unit) = output
+
+  makeRunner name score pre post baseRunner
+
+def stringPairCmp (Pair ff fs) (Pair sf ss) =
+  if ff ==* sf && fs ==* ss
+  then EQ
+  else LT
+
+global def makeRunnerFromJSON name scoreMultiplier jEnv baseRunner =
+  match jEnv
+    JObject resources =
+      resources
+      | map getPairSecond
+      | map extractEnvFromJSON
+      | findFail
+      | rmap flatten
+      | rmap stringPairCmp.distinctBy
+      | rmap (makePresetEnvironmentRunner name scoreMultiplier _ baseRunner)
+    other = Fail "Environment JSON is not a JObject, found: {format other}".makeError
+
+publish runner =
+  def environmentJSON =
+    "{here}/../environment.json"
+    | source
+    | parseJSONFile
+  match environmentJSON
+    Fail e = panic e.format
+    Pass json =
+      def runnerResults =
+        makeRunnerFromJSON "environment-json-local" 1.5 json localRunner,
+        makeRunnerFromJSON "environment-json-default" 1.5 json defaultRunner,
+        Nil
+      match runnerResults.findFail
+        Fail e = panic e.format
+        Pass runners = runners
