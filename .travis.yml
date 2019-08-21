@@ -5,4 +5,4 @@ script:
   - docker login -u $USERNAME -p $PASSWORD
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
   - docker build --file=environment-blockci.Dockerfile --tag=sifive/environment-blockci:$TAG .
-  - docker push sifive/environment-blockci
+  - if [ "$TRAVIS_TAG" != "" ]; then docker push sifive/environment-blockci; fi
