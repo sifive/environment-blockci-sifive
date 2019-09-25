@@ -1,8 +1,24 @@
 services:
   - docker
+env:
+  global:
+    DOCKER_IMAGE_TAG=$(if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "$TRAVIS_BRANCH" ; fi)
+    DOCKER_IMAGE_NAME="sifive/environment-blockci"
 
-script:
-  - docker login -u $USERNAME -p $PASSWORD
-  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
-  - docker build --file=environment-blockci.Dockerfile --tag=sifive/environment-blockci:$TAG .
-  - if [ "$TRAVIS_TAG" != "" ]; then docker push sifive/environment-blockci; fi
+stages:
+  - test
+  - deploy
+
+jobs:
+  include:
+    - stage: test
+      name: "Build Wit Dockerfile"
+      script: ./build_image.sh
+
+    - stage: deploy
+      name: "Deploy Docker Image"
+      # For pull requests, branch is the base branch (on PR to master: branch = master)
+      if: tag IS present OR (branch = master AND type = push)
+      script:
+        - ./build_image.sh
+        - ./push_image.sh

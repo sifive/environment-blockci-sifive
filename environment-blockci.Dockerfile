@@ -1,29 +1,29 @@
 FROM ubuntu:xenial 
 
 RUN apt-get update && apt-get install -y \
-  wget \
-  zip \
+  autoconf \
+  autotools-dev \
   curl \
-  openjdk-8-jdk \
-  software-properties-common \
   device-tree-compiler \
-  libfdt-dev \
-  libre2-dev \
-  nodejs \
-  python3-pip \
-  makedev \
   fuse \
-  libfuse-dev \
-  libsqlite3-dev \
-  libgmp-dev \
-  libncurses5-dev \
-  pkg-config \
-  git \
   g++ \
   gcc \
+  git \
+  libfdt-dev \
+  libfuse-dev \
+  libgmp-dev \
+  libncurses5-dev \
+  libre2-dev \
+  libsqlite3-dev \
   libtool-bin \
-  autoconf \
-  autotools-dev 
+  makedev \
+  nodejs \
+  openjdk-8-jdk \
+  pkg-config \
+  python3-pip \
+  software-properties-common \
+  wget \
+  zip
 
 RUN wget https://github.com/sifive/wake/releases/download/v0.15.1/ubuntu-16.04-wake_0.15.1-1_amd64.deb && \
     dpkg -i ubuntu-16.04-wake_0.15.1-1_amd64.deb
