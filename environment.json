@@ -1,13 +1,11 @@
 {
   "protoc": {
-    "PATH": "../bin/protoc"
+    "PATH": "/usr/local/bin"
   },
   "verilator": {
-    "PATH": "/usr/local/bin",
-    "VERILATOR_ROOT": "../verilator/share/verilator"
+    "PATH": "/usr/local/bin"
   },
   "riscv-toolchain": {
-    "PATH": "../opt/riscv64-unknown-elf-gcc-8.2.0-2019.05.3-x86_64-linux-ubuntu14/bin",
-    "RISCV": "../opt/riscv64-unknown-elf-gcc-8.2.0-2019.05.3-x86_64-linux-ubuntu14/bin"
+    "PATH": "/opt/riscv64-unknown-elf-gcc-8.3.0-2019.08.0-x86_64-linux-ubuntu14/bin"
   }
 }
