@@ -4,6 +4,7 @@ env:
   global:
     DOCKER_IMAGE_TAG=$(if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "$TRAVIS_BRANCH" ; fi)
     DOCKER_IMAGE_NAME="sifive/environment-blockci"
+    DOCKER_CACHE_IMAGE=sifive/environment-blockci:latest
 
 stages:
   - test
