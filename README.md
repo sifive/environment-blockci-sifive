@@ -22,13 +22,11 @@ The Docker images and environment package contained in this repo can be used to 
 
 At a high level, the process works as follows:
 
-1. Write a Dockerfile containing additional dependencies for the specific repository (i.e. Verilator for block-pio-sifive). The Dockerfile should use environment-blockci as its parent image. 
+1. Use the Wit Docker image to initialize a workspace containing the repository being tested and an environment package (i.e. environment-blockci-sifive).
 
-2. Use the Wit Docker image to initialize a workspace containing the repository being tested and an environment package (i.e. environment-blockci-sifive).
+2. Use the environment-blockci Docker image to run the wake build rules to test the functionality of the block.
 
-3. Create a Docker container for testing by building from the repository-specific Dockerfile.
-
-4. Run commands testing the functionality of the repository inside the created Docker container. 
+Note: There is not a mechanism to add additional packages to the Docker image yet.
 
 ## Updating the Docker Images
 
