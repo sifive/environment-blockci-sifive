@@ -45,3 +45,15 @@ RUN curl -L -o /tmp/verilator.deb -L https://github.com/sifive/verilator/release
 RUN curl -L -o /tmp/wake.deb https://github.com/sifive/wake/releases/download/v0.15.1/ubuntu-16.04-wake_0.15.1-1_amd64.deb && \
     dpkg -i /tmp/wake.deb && \
     rm /tmp/wake.deb
+
+# Install Python 3.7
+RUN add-apt-repository ppa:deadsnakes/ppa && \
+  apt-get update && \
+  apt-get install -y python3.7 python3.7-venv && \
+  curl -L https://github.com/pypa/get-pip/raw/0eed4d8903dab820c92779716ab66c414d8b11a4/get-pip.py | python3.7 - 'pip==18.1'
+
+# Install Ruby
+RUN add-apt-repository -y ppa:brightbox/ruby-ng && \
+  apt-get update && \
+  apt-get install -y ruby2.5 ruby2.5-dev && \
+  gem2.5 install bundler -v 2.0.2
