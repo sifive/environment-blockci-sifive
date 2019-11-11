@@ -13,14 +13,11 @@ def extractEnvFromJSON = match _
     | findFail
   other = Fail "Environment JSON is not a JObject, found: {format other}".makeError
 
-def absPath path =
-  if matches `/.*` path then path else simplify "{workspace}/{path}"
-
 def prependOrElseSetEnv env (Pair key value) =
   def editFn =
     _
-    | omap ("{value.absPath}:{_}")
-    | getOrElse value.absPath
+    | omap ("{value}:{_}")
+    | getOrElse value
     | Some
   editEnvironment key editFn env
 
