@@ -1,17 +1,52 @@
-#################################################################################
-## Logic for handling custom environment
-##
-## Do not edit below this line
-#################################################################################
+def semverMatches range version =
+  range ==* version || (
+    def cmdline =
+      "python3", "-c", "import semver; exit(not semver.match(\"{version}\", \"{range}\"))", Nil
+    makePlan cmdline Nil
+    | setPlanKeep False
+    | setPlanStderr logNever
+    | setPlanStdout logNever
+    | runJobWith defaultRunner
+    | isJobOk
+  )
 
-def extractEnvFromJSON = match _
-  JObject envPairs =
-    def extractEnvValue (Pair var jValue) = match jValue
-      JString value = Pair var value | Pass
-      _ = Fail "Environment variable {var} is not a string, found: {format jValue}".makeError
-    map extractEnvValue envPairs
+
+def jString jValue = match jValue
+  JString string = Pass string
+  _ = Fail "not a JString".makeError
+
+def jObject jValue = match jValue
+  JObject fields = Pass fields
+  _ = Fail "not a JObject".makeError
+
+def jFieldFn fn next jValue =  match jValue.jObject
+  Fail e = Fail e
+  Pass fields = match (find (fn _.getPairFirst) fields)
+    Some (Pair (Pair _ value) _) = next value
+    None = Fail "no matching field".makeError
+
+def jField name next jValue =
+  jFieldFn (name ==* _) next jValue
+
+
+def getEnvironmentFromJValue semverMatchFn resourceString jvalue =
+  def toolRange = extract `([^/]*)/([^/]*)` resourceString
+  def vendorToolRange = extract `([^/]*)/([^/]*)/([^/]*)` resourceString
+  def fieldsResult = match toolRange vendorToolRange
+    _ (vendor, tool, range, Nil) =
+      jField vendor (jField tool (jFieldFn range.semverMatchFn jObject)) jvalue
+    (tool, range, Nil) _=
+      jField tool (jFieldFn range.semverMatchFn jObject) jvalue
+    _ _ = Fail "resources string does not match [vendor/]tool/version format: {resourceString}".makeError
+
+  def getEnvironment fields =
+    def getEnvKey (Pair field val) = rmap (Pair field _) val.jString
+    fields
+    | map getEnvKey
     | findFail
-  other = Fail "Environment JSON is not a JObject, found: {format other}".makeError
+
+  rmapPass getEnvironment fieldsResult
+
 
 def prependOrElseSetEnv env (Pair key value) =
   def editFn =
@@ -21,58 +56,71 @@ def prependOrElseSetEnv env (Pair key value) =
     | Some
   editEnvironment key editFn env
 
-global def makePresetEnvironmentRunner name scoreMultiplier env baseRunner =
+tuple JSONEnvironmentRunnerPlan =
+  global Name: String
+  global ScoreFn: Double => Double
+  global SemverMatchFn: (range: String) => (version: String) => Boolean
+  global JSONs: List JValue
+  global BaseRunner: Runner
+
+global def makeJSONEnvironmentRunnerPlan name scoreFn semverMatchFn jsons baseRunner =
+  JSONEnvironmentRunnerPlan name scoreFn semverMatchFn jsons baseRunner
+
+global def makeBetterJSONRunner (JSONEnvironmentRunnerPlan name scoreFn semverMatchFn jValues baseRunner) =
+  def getResourceEnvPairs resources =
+    def getEnv resource =
+      def envResult = findPassFn (getEnvironmentFromJValue semverMatchFn resource) jValues
+      Pair resource envResult
+    map getEnv resources
+
+  def getFailedResources resourceEnvPairs =
+    def getResourceIfFail (Pair resource result) = match result
+      Pass _ = None
+      Fail _ = Some resource
+    mapPartial getResourceIfFail resourceEnvPairs
+
   def score plan =
+    def failedResources = plan.getPlanResources.getResourceEnvPairs.getFailedResources
     plan
-    | setPlanResources Nil
+    | setPlanResources failedResources
     | baseRunner.getRunnerScore
-    | rmap (_ *. scoreMultiplier)
+    | rmap scoreFn
+
 
   def pre input =
-    def newEnv =
+    def inputFn input =
+      def resourceEnvPairs = input.getRunnerInputResources.getResourceEnvPairs
+      def newEnv =
+        def prependEnv env1 (Pair resource envResult) = match envResult
+          Pass env2 = foldl prependOrElseSetEnv env1 env2
+          Fail _ = env1
+        input
+        | getRunnerInputEnvironment
+        | (foldl prependEnv _ resourceEnvPairs)
+      def newResources = getFailedResources resourceEnvPairs
       input
-      | rmap getRunnerInputEnvironment
-      | rmap (foldl prependOrElseSetEnv _ env)
-    def newInput =
-      match input newEnv
-        (Pass i) (Pass e) = Pass (setRunnerInputEnvironment e i)
-        (Fail e) _ = Fail e
-        _ (Fail e) = Fail e
-    Pair newInput Unit
+      | setRunnerInputEnvironment newEnv
+      | setRunnerInputEnvironment newResources
+    Pair (rmap inputFn input) Unit
 
   def post (Pair output Unit) = output
 
   makeRunner name score pre post baseRunner
 
-def stringPairCmp (Pair ff fs) (Pair sf ss) =
-  if ff ==* sf && fs ==* ss
-  then EQ
-  else LT
-
-global def makeRunnerFromJSON name scoreMultiplier jEnv baseRunner =
-  match jEnv
-    JObject resources =
-      resources
-      | map getPairSecond
-      | map extractEnvFromJSON
-      | findFail
-      | rmap flatten
-      | rmap stringPairCmp.distinctBy
-      | rmap (makePresetEnvironmentRunner name scoreMultiplier _ baseRunner)
-    other = Fail "Environment JSON is not a JObject, found: {format other}".makeError
+publish blockCIEnvironmentJSONs = source "{here}/../environment.json", Nil
 
 publish runner =
-  def environmentJSON =
-    "{here}/../environment.json"
-    | source
-    | parseJSONFile
-  match environmentJSON
-    Fail e = panic e.format
-    Pass json =
-      def runnerResults =
-        makeRunnerFromJSON "environment-json-local" 1.5 json localRunner,
-        makeRunnerFromJSON "environment-json-default" 1.5 json defaultRunner,
+  def jsonsResult =
+    subscribe blockCIEnvironmentJSONs
+    | map parseJSONFile
+    | findFail
+  match jsonsResult
+    Fail e =
+      def _ = printlnLevel logError "Failed to publish example runner: {e.getErrorCause}"
+      Nil
+    Pass jsons =
+      def plans =
+        makeJSONEnvironmentRunnerPlan "environment-json-local" (_ *. 1.5) semverMatches jsons localRunner,
+        makeJSONEnvironmentRunnerPlan "environment-json-default" (_ *. 1.5) semverMatches jsons defaultRunner,
         Nil
-      match runnerResults.findFail
-        Fail e = panic e.format
-        Pass runners = runners
+      map makeBetterJSONRunner plans
