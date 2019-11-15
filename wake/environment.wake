@@ -1,17 +1,4 @@
-def semverMatches range version =
-  if range ==* version then True else (
-    def cmdline =
-      "python3", "-c", "import semver; exit(not semver.match(\"{version}\", \"{range}\"))", Nil
-    makePlan cmdline Nil
-    | setPlanKeep False
-    | setPlanStderr logNever
-    | setPlanStdout logNever
-    | setPlanResources ("python/python/3.7.1", Nil)
-    | runJobWith localRunner
-    | isJobOk
-  )
-
-
+# helpers for parsing json
 def jString jValue = match jValue
   JString string = Pass string
   _ = Fail "not a JString".makeError
@@ -30,6 +17,17 @@ def jField name next jValue =
   jFieldFn (name ==* _) next jValue
 
 
+def prependOrElseSetEnv env (Pair key value) =
+  def editFn =
+    _
+    | omap ("{value}:{_}")
+    | getOrElse value
+    | Some
+  editEnvironment key editFn env
+
+
+# extracts an environment from a JValue using `resourceString` as the json path
+# returns Result (List (Pair String String)) Error
 def getEnvironmentFromJValue semverMatchFn resourceString jvalue =
   def toolRange = extract `([^/]*)/([^/]*)` resourceString
   def vendorToolRange = extract `([^/]*)/([^/]*)/([^/]*)` resourceString
@@ -49,25 +47,17 @@ def getEnvironmentFromJValue semverMatchFn resourceString jvalue =
   rmapPass getEnvironment fieldsResult
 
 
-def prependOrElseSetEnv env (Pair key value) =
-  def editFn =
-    _
-    | omap ("{value}:{_}")
-    | getOrElse value
-    | Some
-  editEnvironment key editFn env
-
 tuple JSONEnvironmentRunnerPlan =
   global Name: String
-  global ScoreFn: Double => Double
-  global SemverMatchFn: (range: String) => (version: String) => Boolean
-  global JSONs: List JValue
+  global ScoreFn: (baseScore: Double) => Double # modifier to apply to the base runner's score
+  global SemverMatchFn: (range: String) => (version: String) => Boolean # checks whether version range matches a given version
+  global JSONs: List JValue # jsons containing resource to environment mappings
   global BaseRunner: Runner
 
 global def makeJSONEnvironmentRunnerPlan name scoreFn semverMatchFn jsons baseRunner =
   JSONEnvironmentRunnerPlan name scoreFn semverMatchFn jsons baseRunner
 
-global def makeBetterJSONRunner (JSONEnvironmentRunnerPlan name scoreFn semverMatchFn jValues baseRunner) =
+global def makeJSONEnvironmentRunner (JSONEnvironmentRunnerPlan name scoreFn semverMatchFn jValues baseRunner) =
   def getResourceEnvPairs resources =
     def getEnv resource =
       def envResult = findPassFn (getEnvironmentFromJValue semverMatchFn resource) jValues
@@ -108,6 +98,20 @@ global def makeBetterJSONRunner (JSONEnvironmentRunnerPlan name scoreFn semverMa
 
   makeRunner name score pre post baseRunner
 
+
+
+def semverMatches range version =
+  if range ==* version then True else (
+    def cmdline =
+      "python3", "-c", "import semver; exit(not semver.match(\"{version}\", \"{range}\"))", Nil
+    makePlan cmdline Nil
+    | setPlanKeep False
+    | setPlanStderr logNever
+    | setPlanStdout logNever
+    | runJobWith localRunner
+    | isJobOk
+  )
+
 publish blockCIEnvironmentJSONs = source "{here}/../environment.json", Nil
 
 publish runner =
@@ -124,4 +128,4 @@ publish runner =
         makeJSONEnvironmentRunnerPlan "environment-json-local" (_ *. 1.5) semverMatches jsons localRunner,
         makeJSONEnvironmentRunnerPlan "environment-json-default" (_ *. 1.5) semverMatches jsons defaultRunner,
         Nil
-      map makeBetterJSONRunner plans
+      map makeJSONEnvironmentRunner plans
