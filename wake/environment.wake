@@ -1,12 +1,13 @@
 def semverMatches range version =
-  range ==* version || (
+  if range ==* version then True else (
     def cmdline =
       "python3", "-c", "import semver; exit(not semver.match(\"{version}\", \"{range}\"))", Nil
     makePlan cmdline Nil
     | setPlanKeep False
     | setPlanStderr logNever
     | setPlanStdout logNever
-    | runJobWith defaultRunner
+    | setPlanResources ("python/python/3.7.1", Nil)
+    | runJobWith localRunner
     | isJobOk
   )
 
@@ -100,7 +101,7 @@ global def makeBetterJSONRunner (JSONEnvironmentRunnerPlan name scoreFn semverMa
       def newResources = getFailedResources resourceEnvPairs
       input
       | setRunnerInputEnvironment newEnv
-      | setRunnerInputEnvironment newResources
+      | setRunnerInputResources newResources
     Pair (rmap inputFn input) Unit
 
   def post (Pair output Unit) = output
