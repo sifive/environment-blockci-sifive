@@ -7,7 +7,7 @@ publish runner =
     | findFail
   match jsonsResult
     Fail e =
-      def _ = printlnLevel logError "Failed to publish example runner: {e.getErrorCause}"
+      def _ = printlnLevel logError "Failed to publish block CI runner: {e.getErrorCause}"
       Nil
     Pass jsons =
       def plans =
