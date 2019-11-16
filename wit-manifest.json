@@ -1,0 +1,7 @@
+[
+    {
+        "commit": "d9e402f6685d6fe7bcf364a3ac1b11427be2bbd2",
+        "name": "environment-example-sifive",
+        "source": "git@github.com:sifive/environment-example-sifive.git"
+    }
+]
