@@ -1,6 +1,6 @@
 [
     {
-        "commit": "d9e402f6685d6fe7bcf364a3ac1b11427be2bbd2",
+        "commit": "b65660500fe23756b6c7ec0ffb34d7691da1e706",
         "name": "environment-example-sifive",
         "source": "git@github.com:sifive/environment-example-sifive.git"
     }

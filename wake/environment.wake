@@ -1,17 +1,1 @@
-publish blockCIEnvironmentJSONs = source "{here}/../environment.json", Nil
-
-publish runner =
-  def jsonsResult =
-    subscribe blockCIEnvironmentJSONs
-    | map parseJSONFile
-    | findFail
-  match jsonsResult
-    Fail e =
-      def _ = printlnLevel logError "Failed to publish block CI runner: {e.getErrorCause}"
-      Nil
-    Pass jsons =
-      def plans =
-        makeJSONEnvironmentRunnerPlan "environment-json-local" (_ *. 1.5) semverMatches jsons localRunner,
-        makeJSONEnvironmentRunnerPlan "environment-json-default" (_ *. 1.5) semverMatches jsons defaultRunner,
-        Nil
-      map makeJSONEnvironmentRunner plans
+publish environmentJSONs = source "{here}/../environment.json", Nil
