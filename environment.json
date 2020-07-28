@@ -1,18 +1,18 @@
 {
   "google": {
     "protobuf": {
-      "3.5.1": {
+      "3.7.1": {
         "PATH": "/usr/local/bin"
       }
     }
   },
   "verilator": {
-    "4.008": {
+    "4.016": {
       "PATH": "/usr/local/bin"
     }
   },
   "riscv-tools": {
-    "2019.05.0": {
+    "2019.08.0": {
       "PATH": "/opt/riscv64-unknown-elf-gcc-8.3.0-2019.08.0-x86_64-linux-ubuntu14/bin"
     }
   }
