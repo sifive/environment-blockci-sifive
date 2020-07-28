@@ -26,18 +26,18 @@ RUN apt-get update && apt-get install -y \
   zip
 
 # Install RISC-V Toolchain into /opt/risc*
-RUN curl -L -o /tmp/riscv-tools.tar.gz https://static.dev.sifive.com/dev-tools/riscv64-unknown-elf-gcc-8.3.0-2019.08.0-x86_64-linux-ubuntu14.tar.gz && \
+RUN curl -L -o /tmp/riscv-tools.tar.gz https://static.dev.sifive.com/dev-tools/riscv64-unknown-elf-gcc-8.2.0-2019.05.3-x86_64-linux-ubuntu14.tar.gz && \
     tar xzf /tmp/riscv-tools.tar.gz -C /opt && \
     rm /tmp/riscv-tools.tar.gz
 
 # Install protocol buffers (protoc) into /usr/local
-RUN curl -L -o /tmp/protoc.zip https://github.com/protocolbuffers/protobuf/releases/download/v3.7.1/protoc-3.7.1-linux-x86_64.zip && \
+RUN curl -L -o /tmp/protoc.zip https://github.com/protocolbuffers/protobuf/releases/download/v3.5.1/protoc-3.5.1-linux-x86_64.zip && \
     cd /usr/local && \
     unzip /tmp/protoc.zip && \
     rm /tmp/protoc.zip
 
 # Install Verilator into /usr/local
-RUN curl -L -o /tmp/verilator.deb -L https://github.com/sifive/verilator/releases/download/4.016-0sifive1/verilator_4.016-0sifive1_amd64.deb && \
+RUN curl -L -o /tmp/verilator.deb -L https://github.com/sifive/verilator/releases/download/4.028-0sifive1/verilator_4.028-0sifive1_amd64.deb && \
   apt install -y /tmp/verilator.deb && \
   rm /tmp/verilator.deb
 
