@@ -1,11 +1,19 @@
 {
-  "protoc": {
-    "PATH": "/usr/local/bin"
+  "google": {
+    "protobuf": {
+      "3.7.1": {
+        "PATH": "/usr/local/bin"
+      }
+    }
   },
   "verilator": {
-    "PATH": "/usr/local/bin"
+    "4.016": {
+      "PATH": "/usr/local/bin"
+    }
   },
-  "riscv-toolchain": {
-    "PATH": "/opt/riscv64-unknown-elf-gcc-8.3.0-2019.08.0-x86_64-linux-ubuntu14/bin"
+  "riscv-tools": {
+    "2019.08.0": {
+      "PATH": "/opt/riscv64-unknown-elf-gcc-8.3.0-2019.08.0-x86_64-linux-ubuntu14/bin"
+    }
   }
 }
