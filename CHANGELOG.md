@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.5.0]
+
 ### Backwards Incompatible Changes
 - The environment runner now only matches on specific versions of protobuf, verilator, and riscv-tools.
 - Protobuf has been downgraded from 3.7.1 to 3.5.1 to match api-firrtl-sifive.
@@ -25,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Backwards Incompatible Changes
 - Bumped version of wake from 0.15.1 to 0.17.1, which contains backwards incompatible changes to the language. See https://github.com/sifive/wake/releases/tag/v0.16.0 and https://github.com/sifive/wake/releases/tag/v0.17.0 for the major changes.
 
-[Unreleased]: https://github.com/sifive/environment-blockci-sifive/compare/0.4.0...HEAD
+[Unreleased]: https://github.com/sifive/environment-blockci-sifive/compare/0.5.0...HEAD
+[0.5.0]: https://github.com/sifive/environment-blockci-sifive/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/sifive/environment-blockci-sifive/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/sifive/environment-blockci-sifive/compare/0.2.1...0.3.0
