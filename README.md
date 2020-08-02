@@ -30,4 +30,4 @@ Note: There is not a mechanism to add additional packages to the Docker image ye
 
 ## Updating the Docker Images
 
-Commits to the `environment-blockci-sifive` or `wit` Git repository trigger a Travis build that rebuilds the Docker image housed in the respective repo. Versioned releases are pushed to Docker Hub with the specified tag.
+See [docs/how-to/make-a-release.md](docs/how-to/make-a-release.md).
