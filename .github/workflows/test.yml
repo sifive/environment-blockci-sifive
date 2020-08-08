@@ -1,0 +1,19 @@
+name: Test
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  test_wake_action:
+    runs-on: ubuntu-latest
+    name: A job to test the wake rule
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./actions/wake
+        with:
+          command: --no-workspace -x 'seq 100'
