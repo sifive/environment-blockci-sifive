@@ -42,7 +42,7 @@ RUN curl -L -o /tmp/verilator.deb -L https://github.com/sifive/verilator/release
   rm /tmp/verilator.deb
 
 # Install Wake into /usr
-RUN curl -L -o /tmp/wake.deb https://github.com/sifive/wake/releases/download/v0.18.1/ubuntu-16-04-wake_0.18.1-1_amd64.deb && \
+RUN curl -L -o /tmp/wake.deb https://github.com/sifive/wake/releases/download/v0.19.0/ubuntu-16-04-wake_0.19.0-1_amd64.deb && \
     dpkg -i /tmp/wake.deb && \
     rm /tmp/wake.deb
 
@@ -57,3 +57,6 @@ RUN add-apt-repository -y ppa:brightbox/ruby-ng && \
   apt-get update && \
   apt-get install -y ruby2.5 ruby2.5-dev && \
   gem2.5 install bundler -v 2.0.2
+
+# Private: Not for anyone to use except our own GitHub Actions
+RUN mkdir /secret && git clone https://github.com/sifive/wit.git /secret --branch v0.13.1 --depth 1

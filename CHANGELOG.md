@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Backwards Incompatible Changes
+- Bumped version of wake from 0.18.1 to 0.19.0, which contains minor, but possibly backwards-incompatible changes to the language. See https://github.com/sifive/wake/releases/tag/v0.19.0 for more details.
+
 
 ## [0.6.0]
 
