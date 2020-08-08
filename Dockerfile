@@ -42,7 +42,7 @@ RUN curl -L -o /tmp/verilator.deb -L https://github.com/sifive/verilator/release
   rm /tmp/verilator.deb
 
 # Install Wake into /usr
-RUN curl -L -o /tmp/wake.deb https://github.com/sifive/wake/releases/download/v0.18.1/ubuntu-16-04-wake_0.18.1-1_amd64.deb && \
+RUN curl -L -o /tmp/wake.deb https://github.com/sifive/wake/releases/download/v0.19.0/ubuntu-16-04-wake_0.19.0-1_amd64.deb && \
     dpkg -i /tmp/wake.deb && \
     rm /tmp/wake.deb
 
