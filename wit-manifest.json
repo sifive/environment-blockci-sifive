@@ -1,7 +1,7 @@
 [
     {
-        "//": "v0.2.0",
-        "commit": "0395dd00c2c4210f3c2bbd82fa8752244df81a29",
+        "//": "v0.2.1",
+        "commit": "c5326485f842bf26321d0b141ca0d02676138b3b",
         "name": "environment-example-sifive",
         "source": "git@github.com:sifive/environment-example-sifive.git"
     }
