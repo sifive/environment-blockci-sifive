@@ -57,6 +57,3 @@ RUN add-apt-repository -y ppa:brightbox/ruby-ng && \
   apt-get update && \
   apt-get install -y ruby2.5 ruby2.5-dev && \
   gem2.5 install bundler -v 2.0.2
-
-# Private: Not for anyone to use except our own GitHub Actions
-RUN mkdir /secret && git clone https://github.com/sifive/wit.git /secret --branch v0.13.1 --depth 1
