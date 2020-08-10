@@ -7,14 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Added a GitHub Action which can run a Wake command within the environment-blockci-sifive Docker container. https://github.com/sifive/environment-blockci-sifive/pull/15
-
 
 ## [0.7.0]
 
 ### Backwards Incompatible Changes
 - Bumped version of wake from 0.18.1 to 0.19.0, which contains minor, but possibly backwards-incompatible changes to the language. See https://github.com/sifive/wake/releases/tag/v0.19.0 for more details.
+
+### Added
+- Added a GitHub Action which can run a Wake command within the environment-blockci-sifive Docker container. https://github.com/sifive/environment-blockci-sifive/pull/15
 
 
 ## [0.6.0]
