@@ -17,7 +17,6 @@ RUN apt-get update && apt-get install -y \
   libsqlite3-dev \
   libtool-bin \
   makedev \
-  nodejs \
   openjdk-8-jdk \
   pkg-config \
   python \
@@ -57,3 +56,10 @@ RUN add-apt-repository -y ppa:brightbox/ruby-ng && \
   apt-get update && \
   apt-get install -y ruby2.5 ruby2.5-dev && \
   gem2.5 install bundler -v 2.0.2
+
+# Install NodeJS
+RUN mkdir -p /opt/nodejs/ && \
+    curl -L -o /opt/nodejs/node.tar.xz https://nodejs.org/download/release/v10.15.0/node-v10.15.0-linux-x64.tar.xz && \
+    tar xf /opt/nodejs/node.tar.xz --directory /opt/nodejs && \
+    mv /opt/nodejs/node-v10.15.0-linux-x64 /opt/nodejs/10.15.0 && \
+    rm /opt/nodejs/node.tar.xz

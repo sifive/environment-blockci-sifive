@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Installed NodeJS 10.15.0. Note: Although this also removed the Ubuntu 16.04-provided NodeJS v4.2.6, this is not being considered a backwards-incompatible change because that version of NodeJS is so old that it's unlikely that any Wake rules ever used it.
+
 
 ## [0.7.0]
 
