@@ -6,6 +6,13 @@
       }
     }
   },
+  "nodejs": {
+    "nodejs": {
+      "10.15.0": {
+        "PATH": "/opt/nodejs/10.15.0/bin"
+      }
+    }
+  },
   "verilator": {
     "4.028": {
       "PATH": "/usr/local/bin"
