@@ -16,7 +16,7 @@ inputs:
       The version of the environment-blockci-sifive docker image to use.  By
       default, the same version is used as the release tag of the action.
     required: false
-    default: 0.7.0
+    default: 0.7.1
 
 runs:
   using: "composite"
