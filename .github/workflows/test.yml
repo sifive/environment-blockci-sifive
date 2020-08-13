@@ -17,3 +17,12 @@ jobs:
       - uses: ./actions/wake
         with:
           command: --no-workspace -x 'seq 100'
+
+  test_shell_action:
+    runs-on: ubuntu-latest
+    name: A job to test the shell rule
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./actions/shell
+        with:
+          command: echo "Hello World"; echo "I love dog's tricks"; echo 'Escaping '\'' is tricky' && true
