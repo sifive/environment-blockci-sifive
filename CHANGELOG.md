@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1]
+
 ### Added
 - Installed NodeJS 10.15.0. Note: Although this also removed the Ubuntu 16.04-provided NodeJS v4.2.6, this is not being considered a backwards-incompatible change because that version of NodeJS is so old that it's unlikely that any Wake rules ever used it.
-
+- Added a GitHub Action which can run a shell command within the environment-blockci-sifive Docker container. https://github.com/sifive/environment-blockci-sifive/pull/22
 
 ## [0.7.0]
 
