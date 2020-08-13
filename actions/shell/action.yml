@@ -1,0 +1,34 @@
+name: 'Shell Action'
+description: 'Invoke a shell command inside the environment-blockci-sifive container'
+inputs:
+  command:
+    description: |
+      The command which will be executed by bash inside the workspace.
+    required: true
+  workspace:
+    description: |
+      The location (relative to the build directory) of the root of the wit
+      workspace.  This should typically match wherever wit/actions/init ran.
+    required: false
+    default: .
+  version:
+    description: |
+      The version of the environment-blockci-sifive docker image to use.  By
+      default, the same version is used as the release tag of the action.
+    required: false
+    default: 0.7.0
+
+runs:
+  using: "composite"
+  steps:
+    - name: 'Run docker'
+      shell: bash
+      env:
+        COMMAND: ${{ inputs.command }}
+      run: |
+        set -xeuo pipefail
+        docker run --rm \
+          --device /dev/fuse --cap-add SYS_ADMIN --security-opt apparmor:unconfined \
+          --volume="$GITHUB_WORKSPACE/${{ inputs.workspace }}:/mnt/workspace" --workdir="/mnt/workspace" \
+          sifive/environment-blockci:${{ inputs.version }} \
+          /bin/bash -c "$COMMAND"
