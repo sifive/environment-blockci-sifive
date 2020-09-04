@@ -25,7 +25,7 @@ RUN apt-get update && apt-get install -y \
   zip
 
 # Install RISC-V Toolchain into /opt/risc*
-RUN curl -L -o /tmp/riscv-tools.tar.gz https://static.dev.sifive.com/dev-tools/riscv64-unknown-elf-gcc-8.2.0-2019.05.3-x86_64-linux-ubuntu14.tar.gz && \
+RUN curl -L -o /tmp/riscv-tools.tar.gz https://static.dev.sifive.com/dev-tools/freedom-tools/v2020.08/riscv64-unknown-elf-gcc-10.1.0-2020.08.2-x86_64-linux-ubuntu14.tar.gz && \
     tar xzf /tmp/riscv-tools.tar.gz -C /opt && \
     rm /tmp/riscv-tools.tar.gz
 

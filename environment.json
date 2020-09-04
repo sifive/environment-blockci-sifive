@@ -19,8 +19,8 @@
     }
   },
   "riscv-tools": {
-    "2019.05.0": {
-      "PATH": "/opt/riscv64-unknown-elf-gcc-8.2.0-2019.05.3-x86_64-linux-ubuntu14/bin"
+    "2020.08.2": {
+      "PATH": "/opt/riscv64-unknown-elf-gcc-10.1.0-2020.08.2-x86_64-linux-ubuntu14/bin"
     }
   }
 }
