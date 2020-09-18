@@ -15,7 +15,7 @@ jobs:
 
     steps:
     - name: Run a shell command
-      uses: sifive/environment-blockci-sifive/actions/shell@0.7.1
+      uses: sifive/environment-blockci-sifive/actions/shell@0.8.0
       with:
         command: echo "Hello World"
 ```

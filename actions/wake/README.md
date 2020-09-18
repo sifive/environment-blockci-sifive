@@ -20,10 +20,10 @@ jobs:
     - name: Wit Init
       uses: sifive/wit/actions/init@v0.13.2
       with:
-        additional_packages: git@github.com:sifive/environment-blockci-sifive.git::0.7.1
+        additional_packages: git@github.com:sifive/environment-blockci-sifive.git::0.8.0
 
     - name: Run wake scala compile
-      uses: sifive/environment-blockci-sifive/actions/wake@0.7.1
+      uses: sifive/environment-blockci-sifive/actions/wake@0.8.0
       with:
         command: -x 'compileScalaModule myScalaModule | getPathResult'
 ```
